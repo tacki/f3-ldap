@@ -21,20 +21,37 @@ use Library\LDAP;
 
 class Mapper extends \DB\Cursor
 {
+    /**     
+     * @var resource
+     */
     protected $ldap;
-    protected $attributes;
+    
+    /**     
+     * @var string
+     */
     protected $dn;
+    
+    /**    
+     * @var array
+     */
     protected $data = [];
+    
+    /**     
+     * @var array
+     */
     protected $origData = [];
     
-    public function __construct(LDAP $ldap, array $attributes=array())
+    /**
+     * Constructor
+     * @param LDAP $ldap
+     */
+    public function __construct(LDAP $ldap)
     {
         $this->ldap = $ldap;
-        $this->attributes = $attributes;
     }
     
     /**
-     * 
+     * Return DB Type
      * @return string
      */
     public function dbtype()
@@ -44,9 +61,10 @@ class Mapper extends \DB\Cursor
     
     /**
      * Return the fields of the mapper object as an associative array
+     * @param LDAP $obj
      * @return array
      */
-    function cast($obj = NULL)
+    function cast(LDAP $obj = NULL)
     {
         if (!$obj)
             $obj=$this;
@@ -55,30 +73,32 @@ class Mapper extends \DB\Cursor
     
     /**
      *	Insert new record
-     *	@return object
+     *	@return bool
      */
     public function insert() 
-    {  
-        $this->ldap->add($this->dn, $this->data);
+    {          
+        return $this->ldap->add($this->dn, $this->data);
     }         
     
     /**
      *	Update current record
-     *	@return object
+     *	@return bool
      */
     public function update() 
-    {         
-        $this->ldap->save($this->dn, $this->getChanges());
+    {    
+        $changes = $this->getChanges();
         $this->clearChanges();
+        return $this->ldap->save($this->dn, $changes);
     }  
     
     /**
      *	Convert array to mapper object
-     *	@return object
      *	@param string $dn
      *	@param array $data
+     *	@return object 
      */
-    protected function factory($data) {
+    protected function factory(array $data) 
+    {
             $mapper=clone($this);
             $mapper->reset();
             $mapper->dn=$data['dn'];
@@ -89,22 +109,22 @@ class Mapper extends \DB\Cursor
                     \Base::instance()->call($mapper->trigger['load'],$mapper);
             return $mapper;
     }    
-    
+        
     /**
-     * 
-     * @param type $filter
+     * Start a Search
+     * @param string $filter
      * @param array $options
-     * @param type $ttl
-     * @return type
+     * @param int $ttl
+     * @return array
      */
-    public function find($filter=NULL, array $options=NULL, $ttl=0)
+    public function find(string $filter=NULL, array $options=NULL, $ttl=0)
     {
         $out=[];
         
         if ($options['limit'] === 1) {
-            $entries = $this->ldap->search($filter, $this->attributes, $ttl)->getOne();
+            $entries = $this->ldap->search(NULL, $filter)->getFirstEntry();
         } else {
-            $entries = $this->ldap->search($filter, $this->attributes, $ttl)->getAll();
+            $entries = $this->ldap->search(NULL, $filter)->getAll($ttl);
         }
         
         foreach ($entries as &$entry) {
@@ -115,12 +135,24 @@ class Mapper extends \DB\Cursor
         return $out;
     }
         
-    public function count($filter=NULL, array $options=NULL, $ttl=0)
+    /**
+     * Count results of a given search
+     * @param string $filter
+     * @param array $options
+     * @param int $ttl
+     * @return int
+     */
+    public function count(string $filter=NULL, array $options=NULL, int $ttl=0)
     {
-        return $this->ldap->search($filter, $this->attributes)->count();
+        return $this->ldap->search(NULL, $filter)->count($ttl);
     }
     
-    public function erase($filter=NULL)
+    /**
+     * Erase mapped entry/entries
+     * @param string $filter
+     * @return bool
+     */
+    public function erase(string $filter=NULL)
     {  
         if ($filter) {
             foreach ($this->find($filter) as $mapper)
@@ -133,6 +165,10 @@ class Mapper extends \DB\Cursor
         return $out;
     }   
     
+    /**
+     * Get Attribute names
+     * @return array
+     */
     public function fields()
     {
         return array_keys($this->data);
@@ -174,22 +210,39 @@ class Mapper extends \DB\Cursor
                 $var[$key]=$field;
     }   
     
+    /**
+     * Get changed Data in this object
+     * @return array
+     */
     public function getChanges()
     {
         return $this->arrayRecursiveDiff($this->data, $this->origData);
     }
     
+    /**
+     * Reset changed Data info
+     */
     public function clearChanges()
     {
         $this->origData = $this->data;
     }
     
-    public function exists($key) 
+    /**
+     * Check if given Attribute exists
+     * @param string $key
+     * @return bool
+     */
+    public function exists(string $key) 
     {
         return array_key_exists($key,$this->data);
     }
 
-    public function set($key, $val) 
+    /**
+     * Set value
+     * @param string $key
+     * @param mixed $val
+     */
+    public function set(string $key, $val) 
     {
         if ($key == 'dn')
             $this->dn = $val; 
@@ -197,7 +250,12 @@ class Mapper extends \DB\Cursor
             $this->data[$key]=$val;
     }
 
-    public function &get($key) 
+    /**
+     * Get Value
+     * @param string $key
+     * @return mixed
+     */
+    public function &get(string $key) 
     {       
         if ($key == 'dn')
             return $this->dn;
@@ -206,19 +264,24 @@ class Mapper extends \DB\Cursor
         user_error(sprintf(self::E_Field,$key),E_USER_ERROR);    
     }
 
-    public function clear($key) 
+    /**
+     * Clear given attribute
+     * @param type $key
+     */
+    public function clear(string $attribute) 
     {
         if ($key!='dn')
-            unset($this->data[$key]);
+            unset($this->data[$attribute]);
     }  
     
     /**
      *	Return record at specified offset using criteria of previous
      *	load() call and make it active
-     *	@return array
-     *	@param $ofs int
+     *	@param int $ofs
+     *	@return array      
      */
-    public function skip($ofs=1) {
+    public function skip($ofs=1) 
+    {
             $this->data=($out=parent::skip($ofs))?$out->data:[];
             $this->origData = $this->data;
             $this->dn=$out?$out->dn:NULL;
@@ -228,9 +291,9 @@ class Mapper extends \DB\Cursor
     }    
     
     /**
-    *	Reset cursor
-    *	@return NULL
-    **/
+     *	Reset cursor
+     *	@return NULL
+     */
     public function reset() 
     {
         $this->dn=NULL;
@@ -238,6 +301,12 @@ class Mapper extends \DB\Cursor
         parent::reset();
     }    
     
+    /**
+     * Compare two arrays and get diff (recursive)
+     * @param array $array1
+     * @param array $array2
+     * @return array
+     */
     private function arrayRecursiveDiff(array $array1, array $array2) {
         $result = array();
 
