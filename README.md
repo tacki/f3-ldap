@@ -17,7 +17,7 @@ This Plugin consists of two classes. `LDAP` is a simple Wrapper for the standard
 Some examples how to use the basic LDAP-class:
 
 ```php
-$ldap = new Library\LDAP(
+$ldap = new DB\LDAP(
                          'ldap://myldaphost.example.com',
                          'cn=example,cn=com',
                          'username',
@@ -40,7 +40,7 @@ $ldap->erase($tim['distinguishedName']);
 How to do the same using the LDAP Mapper:
 
 ```php
-$ldap = new Library\LDAP(
+$ldap = new DB\LDAP(
                          'ldap://myldaphost.example.com',
                          'cn=example,cn=com',
                          'username',
@@ -48,8 +48,7 @@ $ldap = new Library\LDAP(
                         );
 
 # Search for all entries in ou=users with an uid
-$mapper = new Library\LDAP\Mapper($ldap);
-$mapper->setBaseDN('ou=users,cn=example,cn=com');
+$mapper = new DB\LDAP\Mapper($ldap, 'ou=users,cn=example,cn=com');
 $users = $mapper->find('(uid=*)');
 
 # Search for a single User and retrieve the first result

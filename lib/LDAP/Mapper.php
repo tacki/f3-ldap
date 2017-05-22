@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Library\LDAP;
+namespace DB\LDAP;
 
-use Library\LDAP;
+use DB\LDAP;
 
 class Mapper extends \DB\Cursor
 {
@@ -25,6 +25,11 @@ class Mapper extends \DB\Cursor
      * @var resource
      */
     protected $ldap;
+    
+    /**
+     * @var string
+     */
+    protected $baseDn;    
     
     /**     
      * @var string
@@ -45,9 +50,10 @@ class Mapper extends \DB\Cursor
      * Constructor
      * @param LDAP $ldap
      */
-    public function __construct(LDAP $ldap)
+    public function __construct(LDAP $ldap, string $baseDn=NULL)
     {
         $this->ldap = $ldap;
+        $this->baseDn = $baseDn;
     }
     
     /**
@@ -117,14 +123,14 @@ class Mapper extends \DB\Cursor
      * @param int $ttl
      * @return array
      */
-    public function find(string $filter=NULL, array $options=NULL, $ttl=0)
+    public function find(string $filter, array $options=NULL, $ttl=0)
     {
         $out=[];
         
         if ($options['limit'] === 1) {
-            $entries = $this->ldap->search(NULL, $filter)->getFirstEntry();
+            $entries = $this->ldap->search($this->baseDn, $filter)->getFirstEntry();
         } else {
-            $entries = $this->ldap->search(NULL, $filter)->getAll($ttl);
+            $entries = $this->ldap->search($this->baseDn, $filter)->getAll($ttl);
         }
         
         foreach ($entries as &$entry) {
