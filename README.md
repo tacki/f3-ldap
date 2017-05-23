@@ -5,6 +5,8 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 
 * [Installation](#installation)
 * [Usage](#usage)
+* [Connections Options](#coptions)
+* [Query Options](#qoptions)
 
 ## Installation
 
@@ -18,11 +20,15 @@ Some examples how to use the basic LDAP-class:
 
 ```php
 $ldap = new DB\LDAP(
-                         'ldap://myldaphost.example.com',
-                         'cn=example,cn=com',
-                         'username',
-                         'password' 
-                        );
+                        'ldap://myldaphost.example.com',
+                        'cn=example,cn=com',
+                        'username',
+                        'password',
+                        array(
+                            LDAP_OPT_PROTOCOL_VERSION=>3,                          
+                            LDAP_OPT_REFERRALS=>0,
+                        )
+        );
 
 # Search for all entries in ou=users with an uid
 $users = $ldap->search('ou=users,cn=example,cn=com', '(uid=*)')->getAll();
@@ -41,11 +47,15 @@ How to do the same using the LDAP Mapper:
 
 ```php
 $ldap = new DB\LDAP(
-                         'ldap://myldaphost.example.com',
-                         'cn=example,cn=com',
-                         'username',
-                         'password' 
-                        );
+                        'ldap://myldaphost.example.com',
+                        'cn=example,cn=com',
+                        'username',
+                        'password',
+                        array(
+                            LDAP_OPT_PROTOCOL_VERSION=>3,                          
+                            LDAP_OPT_REFERRALS=>0,
+                        )
+        );
 
 # Search for all entries in ou=users with an uid
 $mapper = new DB\LDAP\Mapper($ldap, 'ou=users,cn=example,cn=com');
@@ -62,6 +72,8 @@ echo $tim->cn
 $tim->erase();
 ```
 
+## Connections Options
+
 The LDAP connection Options can also be defined inside a f3 config file and don't have to be defined in your source:
 
 ```ini
@@ -75,4 +87,17 @@ PASSWORD="password"
 LDAP_OPT_PROTOCOL_VERSION=3
 LDAP_OPT_DEREF=0
 ...
+```
+
+## Query Options
+
+The Mapper methosd `load`,`find`,`findone` and `count use a options array as second argument. These are the possible options:
+
+```php
+$options['attributes']  // retrieve only given attributes. Default: array() (all attributes)
+$options['scope']       // searchscope. Default: LDAP::SCOPE_SUBTREE (subtree search)
+$options['attronly']    // retrieve only the attributenames. Default: 0 (disabled)
+$options['limit']       // limit to x results. Default: 0 (no limit)
+$options['timelimit']   // limit timelimit to x seconds. Default: 0 (no limit)
+$options['deref']       // specify how aliases should be handled. Default: LDAP_DEREF_NEVER (no dereferencing)
 ```

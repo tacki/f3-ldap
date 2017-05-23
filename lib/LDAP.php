@@ -111,7 +111,7 @@ class LDAP extends \Prefab
     /**
      * Get LDAP Option
      * @param int $option
-     * @return boolean
+     * @return bool
      */
     public function getLDAPOption(int $option)
     {
@@ -228,11 +228,11 @@ class LDAP extends \Prefab
      */
     public function search(string $searchdn=NULL, string $filter='(objectclass=*)', array $attributes=array(), $scope=SELF::SCOPE_SUBTREE, $attrsonly=0, $sizelimit=0, $timelimit=0, $deref=LDAP_DEREF_NEVER)
     {               
-        $this->searchparams = "$search.$searchdn.".implode('.',$attributes).".$recursive.$attrsonly.$sizelimit";
+        $this->searchparams = "$filter.$searchdn.".implode('.',$attributes).".$scope.$attrsonly.$sizelimit";
         
         switch ($scope) {
             case SELF::SCOPE_BASE:
-                $this->searchResult = ldap_read(    $this->ldap,
+                $this->searchResult = @ldap_read(   $this->ldap,
                                                     $searchdn,
                                                     $filter,
                                                     $attributes,
@@ -244,7 +244,7 @@ class LDAP extends \Prefab
                 break;
             
             case SELF::SCOPE_ONELEVEL:
-                $this->searchResult = ldap_list(    $this->ldap, 
+                $this->searchResult = @ldap_list(   $this->ldap, 
                                                     $searchdn?$searchdn:$this->baseDN, 
                                                     $filter, 
                                                     $attributes,
@@ -256,7 +256,7 @@ class LDAP extends \Prefab
                 break;
             
             case SELF::SCOPE_SUBTREE:
-                $this->searchResult = ldap_search(  $this->ldap, 
+                $this->searchResult = @ldap_search( $this->ldap, 
                                                     $searchdn?$searchdn:$this->baseDN, 
                                                     $filter, 
                                                     $attributes,
@@ -351,7 +351,9 @@ class LDAP extends \Prefab
         
         $count = ldap_count_entries($this->ldap, $this->searchResult);
             
-        $cache->set($cacheHash, $count, $ttl);
+        if ($ttl) {
+            $cache->set($cacheHash, $count, $ttl);
+        }            
         
         return $count;
     }    
@@ -372,27 +374,31 @@ class LDAP extends \Prefab
         
         $entries = $this->getEntries();
         
-        $cache->set($cacheHash, $entries, $ttl);        
+        if ($ttl) {
+            $cache->set($cacheHash, $entries, $ttl);        
+        }            
         
         return $entries;
     }
     
     /**
      * Retrieve first Entry
+     * @param int $ttl
      * @return array
      */
-    public function getFirstEntry()
+    public function getFirstEntry(int $ttl=0)
     {
-        return $this->first()->getEntry();
+        return $this->first()->getEntry($ttl);
     }
     
     /**
      * Retrieve current Entry
+     * @param int $ttl
      * @return array
      */
-    public function getEntry()
+    public function getEntry(int $ttl=0)
     {
-        return $this->getSingleEntry();
+        return $this->getSingleEntry($ttl);
     }
     
     /**
@@ -507,16 +513,31 @@ class LDAP extends \Prefab
        
     /**
      * Retrieve Entry at current Cursor
+     * @param int $ttl
      * @return array
      */
-    private function getSingleEntry()
+    private function getSingleEntry(int $ttl=0)
     {
         if (!$this->curEntry) {
-            return false;
+            return [];
+        }
+
+        $dn = ldap_get_dn($this->ldap, $this->curEntry);
+        
+        $f3 = \Base::instance();                
+        $cache = \Cache::instance();
+        $cacheHash = 'ldap.dn.'.$f3->hash($dn);
+        
+        if ($cache->exists($cacheHash)) {
+            return $cache->get($cacheHash);
         }        
-             
+            
         $entry = $this->cleanUpEntry(ldap_get_attributes($this->ldap, $this->curEntry));   
-        $entry['dn'] = ldap_get_dn($this->ldap, $this->curEntry);
+        $entry['dn'] = $dn;
+        
+        if ($ttl) {
+            $cache->set($cacheHash, $entry, $ttl);
+        }            
         
         return $entry;           
     }    
