@@ -91,7 +91,7 @@ LDAP_OPT_DEREF=0
 
 ## Query Options
 
-The Mapper methosd `load`,`find`,`findone` and `count` use a options array as second argument. These are the possible options:
+The Mapper methods `load`,`find`,`findone` and `count` use a options array as second argument. These are the possible options:
 
 ```php
 $options['attributes']  // retrieve only given attributes. Default: array() (all attributes)
