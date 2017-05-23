@@ -5,8 +5,8 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 
 * [Installation](#installation)
 * [Usage](#usage)
-* [Connections Options](#coptions)
-* [Query Options](#qoptions)
+* [Connections Options](#connections-options)
+* [Query Options](#query-options)
 
 ## Installation
 
@@ -30,16 +30,16 @@ $ldap = new DB\LDAP(
                         )
         );
 
-# Search for all entries in ou=users with an uid
+// Search for all entries in ou=users with an uid
 $users = $ldap->search('ou=users,cn=example,cn=com', '(uid=*)')->getAll();
 
-# Search for a single User and retrieve the first result
+// Search for a single User and retrieve the first result
 $tim = $ldap->search(NULL, '(uid=tim)')->getFirstEntry();
 
-# Ouput the Common Name of Tim
+// Ouput the Common Name of Tim
 echo $tim['cn']
 
-# Delete User Tim
+// Delete User Tim
 $ldap->erase($tim['distinguishedName']);
 ```
 
@@ -57,18 +57,18 @@ $ldap = new DB\LDAP(
                         )
         );
 
-# Search for all entries in ou=users with an uid
+// Search for all entries in ou=users with an uid
 $mapper = new DB\LDAP\Mapper($ldap, 'ou=users,cn=example,cn=com');
 $users = $mapper->find('(uid=*)');
 
-# Search for a single User and retrieve the first result
+// Search for a single User and retrieve the first result
 $tim = new Library\LDAP\Mapper($ldap);
 $tim->load('(uid=tim)');
 
-# Ouput the Common Name of Tim
+// Ouput the Common Name of Tim
 echo $tim->cn
 
-# Delete User Tim
+// Delete User Tim
 $tim->erase();
 ```
 
@@ -91,7 +91,7 @@ LDAP_OPT_DEREF=0
 
 ## Query Options
 
-The Mapper methosd `load`,`find`,`findone` and `count use a options array as second argument. These are the possible options:
+The Mapper methosd `load`,`find`,`findone` and `count` use a options array as second argument. These are the possible options:
 
 ```php
 $options['attributes']  // retrieve only given attributes. Default: array() (all attributes)
