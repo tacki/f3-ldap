@@ -66,7 +66,7 @@ $tim = new LDAP\Mapper($ldap);
 $tim->load('(uid=tim)', ['limit'=>1]);
 // or
 $mapper = new LDAP\Mapper($ldap);
-$tim = $mapper->loadone('(uid=tim'));
+$tim = $mapper->findone('(uid=tim'));
 
 // Ouput the Common Name of Tim
 echo $tim->cn
