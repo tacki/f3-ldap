@@ -10,7 +10,7 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 
 ## Installation
 
-To install this plugin, just copy the `lib/LDAP.php` and the `lib/LDAP/Mapper.php` file into your F3 `lib/` or your `AUTOLOAD` folder.
+To install this plugin, just copy the `lib/LDAP.php` and the `lib/LDAP` folder into your F3 `lib/` or your `AUTOLOAD` folder. This plugin requires PHP7.
 
 ## Usage
 
@@ -19,15 +19,15 @@ This Plugin consists of two classes. `LDAP` is a simple Wrapper for the standard
 Some examples how to use the basic LDAP-class:
 
 ```php
-$ldap = new DB\LDAP(
-                        'ldap://myldaphost.example.com',
-                        'cn=example,cn=com',
-                        'username',
-                        'password',
-                        array(
-                            LDAP_OPT_PROTOCOL_VERSION=>3,                          
-                            LDAP_OPT_REFERRALS=>0,
-                        )
+$ldap = new LDAP(
+                    'ldap://myldaphost.example.com',
+                    'cn=example,cn=com',
+                    'username',
+                    'password',
+                    array(
+                        LDAP_OPT_PROTOCOL_VERSION=>3,                          
+                        LDAP_OPT_REFERRALS=>0,
+                    )
         );
 
 // Search for all entries in ou=users with an uid
@@ -46,24 +46,27 @@ $ldap->erase($tim['distinguishedName']);
 How to do the same using the LDAP Mapper:
 
 ```php
-$ldap = new DB\LDAP(
-                        'ldap://myldaphost.example.com',
-                        'cn=example,cn=com',
-                        'username',
-                        'password',
-                        array(
-                            LDAP_OPT_PROTOCOL_VERSION=>3,                          
-                            LDAP_OPT_REFERRALS=>0,
-                        )
+$ldap = new LDAP(
+                    'ldap://myldaphost.example.com',
+                    'cn=example,cn=com',
+                    'username',
+                    'password',
+                    array(
+                        LDAP_OPT_PROTOCOL_VERSION=>3,                          
+                        LDAP_OPT_REFERRALS=>0,
+                    )
         );
 
 // Search for all entries in ou=users with an uid
-$mapper = new DB\LDAP\Mapper($ldap, 'ou=users,cn=example,cn=com');
+$mapper = new LDAP\Mapper($ldap, 'ou=users,cn=example,cn=com');
 $users = $mapper->find('(uid=*)');
 
 // Search for a single User and retrieve the first result
-$tim = new Library\LDAP\Mapper($ldap);
-$tim->load('(uid=tim)');
+$tim = new LDAP\Mapper($ldap);
+$tim->load('(uid=tim)', ['limit'=>1]);
+// or
+$mapper = new LDAP\Mapper($ldap);
+$tim = $mapper->loadone('(uid=tim'));
 
 // Ouput the Common Name of Tim
 echo $tim->cn

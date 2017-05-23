@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace DB;
 
 class LDAP extends \Prefab
 {
@@ -457,9 +456,9 @@ class LDAP extends \Prefab
      */
     public function getAllReferences()
     {
-        $referrals = array();
+        $referrals = [];
         
-        ldap_parse_result($this->ldap, $this->searchResult, NULL, NULL, NULL, $referrals);
+        ldap_parse_result($this->ldap, $this->searchResult, $errcode, $matcheddn, $errmsg, $referrals);
         
         return $referrals;
     }
