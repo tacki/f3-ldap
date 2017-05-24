@@ -8,6 +8,11 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 * [Connections Options](#connections-options)
 * [Query Options](#query-options)
 * [LDAP Class methos](#ldap-class-methods)
+    * [Connecting](#connecting-functions)
+    * [Settings](#settings-functions)
+    * [Search+Result](#search+result-functions)
+    * [Modification](#modification-functions)
+    * [Other](#other-functions)
 
 ## Installation
 
@@ -108,20 +113,18 @@ $options['deref']       // specify how aliases should be handled. Default: LDAP_
 
 ## LDAP Class Methods
 
+### Connecting Functions
 ```php
-/*
-    Connection Functions
-*/
 // Set LDAP Configuration and connect
 function connect(string $ldaphoststring=NULL) : LDAP;
 // Disconnect from LDAP 
 function disconnect() : bool;
 // Try to bind using Credentials in Config or parameters
 function bind(string $username=NULL, string $password=NULL) : LDAP;
+```
 
-/*
-    Settings Functions
-*/
+### Settings Functions
+```php
 // Get LDAP Option
 function getLDAPOption(int $option) : int;
 // Set LDAP Option
@@ -130,10 +133,10 @@ function setLDAPOption(int $option, $value) : bool;
 function setLDAPOptions(array $options) : bool;
 // Set Base DN
 function setBaseDN(string $baseDN) : LDAP;
+```
 
-/*
-    Search+Result Functions
-*/
+### Search+Result Functions
+```php
 // Start a search
 function search(string $searchdn=NULL, 
                 string $filter='(objectclass=*)', 
@@ -163,10 +166,10 @@ function getFirstAttribute() : string;
 function getNextAttribute() : string;
 // Retrieve all references in current searchresult
 function getAllReferences() : array;
+```
 
-/*
-    Modification Functions
-*/
+### Modification Functions
+```php
 // Add Entry at given dn
 function add(string $dn, array $entry) : bool;
 // Save changes to dn
@@ -177,10 +180,10 @@ function rename(string $dn, string $newrdn) : bool;
 function move(string $dn, string $newparent) : bool;
 // Remove DN
 function erase(string $dn) : bool;
+```
 
-/*
-    Other Functions
-*/
+### Other Functions
+```php
 // Get Error Message/Error Code
 function getError($errCode=false) : string;
 ```
