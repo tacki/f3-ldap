@@ -110,7 +110,7 @@ class LDAP extends \Prefab
     /**
      * Get LDAP Option
      * @param int $option
-     * @return bool
+     * @return int
      */
     public function getLDAPOption(int $option)
     {
@@ -175,10 +175,13 @@ class LDAP extends \Prefab
     /**
      * Set Base DN
      * @param string $baseDN
+     * @return $this
      */
     public function setBaseDN(string $baseDN)
     {
         $this->baseDN = $baseDN;
+        
+        return $this;
     }
     
     /**
@@ -447,12 +450,15 @@ class LDAP extends \Prefab
     
     /**
      * Free results
+     * @return bool
      */
     public function free()
     {
-        ldap_free_result($this->searchResult);
+        $result = ldap_free_result($this->searchResult);
         $this->curEntry = false;
         $this->searchparams = '';
+        
+        return $result;
     }
        
     /**

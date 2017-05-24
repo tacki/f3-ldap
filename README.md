@@ -113,69 +113,70 @@ $options['deref']       // specify how aliases should be handled. Default: LDAP_
     Connection Functions
 */
 // Set LDAP Configuration and connect
-public function connect(string $ldaphoststring=NULL);
+function connect(string $ldaphoststring=NULL) : LDAP;
 // Disconnect from LDAP 
-public function disconnect();
+function disconnect() : bool;
 // Try to bind using Credentials in Config or parameters
-bind(string $username=NULL, string $password=NULL);
+function bind(string $username=NULL, string $password=NULL) : LDAP;
 
 /*
     Settings Functions
 */
 // Get LDAP Option
-public function getLDAPOption(int $option);
+function getLDAPOption(int $option) : int;
 // Set LDAP Option
-public function setLDAPOption(int $option, $value);
+function setLDAPOption(int $option, $value) : bool;
 // Set LDAP Options
-setLDAPOptions(array $options);
+function setLDAPOptions(array $options) : bool;
 // Set Base DN
-setBaseDN(string $baseDN);
+function setBaseDN(string $baseDN) : LDAP;
 
 /*
     Search+Result Functions
 */
 // Start a search
-search(string $searchdn=NULL, string $filter='(objectclass=*)', 
+function search(string $searchdn=NULL, string $filter='(objectclass=*)', 
        array $attributes=array(), $scope=SELF::SCOPE_SUBTREE, 
-       $attrsonly=0, $sizelimit=0, $timelimit=0, $deref=LDAP_DEREF_NEVER);
+       $attrsonly=0, $sizelimit=0, $timelimit=0, 
+        $deref=LDAP_DEREF_NEVER) : LDAP;
 // Free results
-free();
+function free() : bool;
 // Count results in searchresult
-count(int $ttl=0);
+function count(int $ttl=0) : int;
 // Get all searchresults
-getAll(int $ttl=0);
+function getAll(int $ttl=0) : array;
 // Retrieve first Entry from searchresult
-getFirstEntry(int $ttl=0);
+function getFirstEntry(int $ttl=0) : array;
 // Set pointer position to first entry in searchresult
-function first();
+function first() : LDAP;
 // Move pointer to next entry
-function next();
+function next() : LDAP;
 // Retrieve Entry at current pointer position
-getEntry(int $ttl=0);
+function getEntry(int $ttl=0) : array;
 // Get Name of the first Attribute in current Entry
-function getFirstAttribute();
-// Move pointer to next Attribute
-function getNextAttribute();
+function getFirstAttribute() : string;
+// Move pointer to next Attribute and retrieve
+function getNextAttribute() : string;
 // Retrieve all references in current searchresult
-getAllReferences();
+function getAllReferences() : array;
 
 /*
     Modification Functions
 */
 // Add Entry at given dn
-add(string $dn, array $entry);
+function add(string $dn, array $entry) : bool;
 // Save changes to dn
-save(string $dn, array $changes);
+function save(string $dn, array $changes) : bool;
 // Rename a dn 
-rename(string $dn, string $newrdn);
+function rename(string $dn, string $newrdn) : bool;
 // Move dn to another parent
-move(string $dn, string $newparent);
+function move(string $dn, string $newparent) : bool;
 // Remove DN
-erase(string $dn);
+function erase(string $dn) : bool;
 
 /*
     Other Functions
 */
 // Get Error Message/Error Code
-getError($errCode=false);
+function getError($errCode=false) : string;
 ```
