@@ -170,7 +170,7 @@ class Mapper extends \DB\Cursor
         
         return $this->ldap->search( 
                                     $this->baseDn, 
-                                    $filter, 
+                                    $filter?$filter:'(objectClass=*)',
                                     $options['attributes'], 
                                     $options['scope'], 
                                     $options['attronly'], 
