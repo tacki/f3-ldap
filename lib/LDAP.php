@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017 Markus Schlegel <markus.schlegel@roto-frank.com>
+ * Copyright (C) 2017 Markus Schlegel <tacki@posteo.de>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,24 +171,6 @@ class LDAP extends \Prefab
         
         return $this;
     }    
-    
-    /**
-     * LDAP rebind method
-     * @param resource $ldap
-     * @param string $referral
-     * @return int
-     */
-    public function rebind($ldap, $referral) 
-    {
-        $f3 = \Base::instance();
-       
-        ldap_set_rebind_proc($ldap, array($this, 'rebind'));
-        // Rebind
-        if (!ldap_bind($ldap, $f3->get('ldap.USERNAME'), $f3->get('ldap.PASSWORD'))) {
-            return 1; // failure.
-        }
-        return 0; // success.
-    } 
     
     /**
      * Set Base DN
@@ -460,43 +442,6 @@ class LDAP extends \Prefab
         
         ldap_parse_result($this->ldap, $this->searchResult, $errcode, $matcheddn, $errmsg, $referrals);
         
-        return $referrals;
-    }
-    
-    /**
-     * Move Cursor to first reference in current search result
-     * @return $this
-     */
-    public function firstReference()
-    {
-        $this->curEntry = ldap_first_reference($this->ldap, $this->searchResult);
-        
-        return $this;
-    }
-    
-    /**
-     * Move Cursor to next reference
-     * @return $this
-     */
-    public function nextReference()
-    {    
-        if ($this->curEntry) {
-            $this->curEntry = ldap_next_reference($this->ldap, $this->curEntry);        
-        } 
-        
-        return $this;
-    }   
-            
-    /**
-     * Retrieve info about current Reference
-     * @return array
-     */
-    public function parseReference()
-    {
-        $referrals = NULL;
-        
-        ldap_parse_reference($this->ldap, $this->curEntry, $referrals);
-                
         return $referrals;
     }
     
