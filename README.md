@@ -135,10 +135,14 @@ function setBaseDN(string $baseDN) : LDAP;
     Search+Result Functions
 */
 // Start a search
-function search(string $searchdn=NULL, string $filter='(objectclass=*)', 
-       array $attributes=array(), $scope=SELF::SCOPE_SUBTREE, 
-       $attrsonly=0, $sizelimit=0, $timelimit=0, 
-        $deref=LDAP_DEREF_NEVER) : LDAP;
+function search(string $searchdn=NULL, 
+                string $filter='(objectclass=*)', 
+                array $attributes=array(), 
+                $scope=LDAP::SCOPE_SUBTREE, 
+                $attrsonly=0, 
+                $sizelimit=0, 
+                $timelimit=0, 
+                $deref=LDAP_DEREF_NEVER) : LDAP;
 // Free results
 function free() : bool;
 // Count results in searchresult
