@@ -7,6 +7,7 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 * [Usage](#usage)
 * [Connections Options](#connections-options)
 * [Query Options](#query-options)
+* [LDAP Class methos](#ldap-class-methods)
 
 ## Installation
 
@@ -103,4 +104,78 @@ $options['attronly']    // retrieve only the attributenames. Default: 0 (disable
 $options['limit']       // limit to x results. Default: 0 (no limit)
 $options['timelimit']   // limit timelimit to x seconds. Default: 0 (no limit)
 $options['deref']       // specify how aliases should be handled. Default: LDAP_DEREF_NEVER (no dereferencing)
+```
+
+## LDAP Class Methods
+
+```php
+/*
+    Connection Functions
+*/
+// Set LDAP Configuration and connect
+public function connect(string $ldaphoststring=NULL);
+// Disconnect from LDAP 
+public function disconnect();
+// Try to bind using Credentials in Config or parameters
+bind(string $username=NULL, string $password=NULL);
+
+/*
+    Settings Functions
+*/
+// Get LDAP Option
+public function getLDAPOption(int $option);
+// Set LDAP Option
+public function setLDAPOption(int $option, $value);
+// Set LDAP Options
+setLDAPOptions(array $options);
+// Set Base DN
+setBaseDN(string $baseDN);
+
+/*
+    Search+Result Functions
+*/
+// Start a search
+search(string $searchdn=NULL, string $filter='(objectclass=*)', 
+       array $attributes=array(), $scope=SELF::SCOPE_SUBTREE, 
+       $attrsonly=0, $sizelimit=0, $timelimit=0, $deref=LDAP_DEREF_NEVER);
+// Free results
+free();
+// Count results in searchresult
+count(int $ttl=0);
+// Get all searchresults
+getAll(int $ttl=0);
+// Retrieve first Entry from searchresult
+getFirstEntry(int $ttl=0);
+// Set pointer position to first entry in searchresult
+function first();
+// Move pointer to next entry
+function next();
+// Retrieve Entry at current pointer position
+getEntry(int $ttl=0);
+// Get Name of the first Attribute in current Entry
+function getFirstAttribute();
+// Move pointer to next Attribute
+function getNextAttribute();
+// Retrieve all references in current searchresult
+getAllReferences();
+
+/*
+    Modification Functions
+*/
+// Add Entry at given dn
+add(string $dn, array $entry);
+// Save changes to dn
+save(string $dn, array $changes);
+// Rename a dn 
+rename(string $dn, string $newrdn);
+// Move dn to another parent
+move(string $dn, string $newparent);
+// Remove DN
+erase(string $dn);
+
+/*
+    Other Functions
+*/
+// Get Error Message/Error Code
+getError($errCode=false);
 ```

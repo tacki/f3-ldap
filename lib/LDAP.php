@@ -317,7 +317,7 @@ class LDAP extends \Prefab
     }
 
     /**
-     * Count results
+     * Count results in searchresult
      * @param int $ttl
      * @return int
      */
