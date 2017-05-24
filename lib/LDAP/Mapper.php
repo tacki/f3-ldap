@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017 Markus Schlegel <markus.schlegel@roto-frank.com>
+ * Copyright (C) 2017 Markus Schlegel <tacki@posteo.de>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace DB\LDAP;
+namespace LDAP;
 
-use DB\LDAP;
+use LDAP;
 
 class Mapper extends \DB\Cursor
 {
@@ -72,8 +72,9 @@ class Mapper extends \DB\Cursor
      */
     function cast($obj = NULL)
     {
-        if (!$obj)
+        if (!$obj) {
             $obj=$this;
+        }
         return $obj->data+['dn'=>$this->dn];
     }
     
@@ -108,11 +109,13 @@ class Mapper extends \DB\Cursor
             $mapper=clone($this);
             $mapper->reset();
             $mapper->dn=$data['dn'];
-            foreach ($data as $field=>$val)
+            foreach ($data as $field=>$val) {
                     $mapper->data[$field]=$val;
+            }
             $mapper->query=[clone($mapper)];
-            if (isset($mapper->trigger['load']))
+            if (isset($mapper->trigger['load'])) {
                     \Base::instance()->call($mapper->trigger['load'],$mapper);
+            }
             return $mapper;
     }    
         
@@ -129,24 +132,21 @@ class Mapper extends \DB\Cursor
         
         $options = $this->filterOptions($options);
         
+        $search = $this->ldap->search(  
+                                        $this->baseDn, 
+                                        $filter?$filter:'(objectClass=*)', 
+                                        $options['attributes'], 
+                                        $options['scope'], 
+                                        $options['attronly'], 
+                                        $options['sizelimit'], 
+                                        $options['timelimit'], 
+                                        $options['deref']
+                                    );
+        
         if ($options['limit'] === 1) {
-            $entries = array($this->ldap->search(   $this->baseDn, 
-                                                    $filter, 
-                                                    $options['attributes'], 
-                                                    $options['scope'], 
-                                                    $options['attronly'], 
-                                                    $options['sizelimit'], 
-                                                    $options['timelimit'], 
-                                                    $options['deref'])->getFirstEntry($ttl));
+            $entries = array($search->getFirstEntry($ttl));
         } else {
-            $entries = $this->ldap->search( $this->baseDn, 
-                                            $filter, 
-                                            $options['attributes'], 
-                                            $options['scope'], 
-                                            $options['attronly'], 
-                                            $options['sizelimit'], 
-                                            $options['timelimit'], 
-                                            $options['deref'])->getAll($ttl);
+            $entries = $search->getAll($ttl);
         }
         
         foreach ($entries as &$entry) {
@@ -168,14 +168,16 @@ class Mapper extends \DB\Cursor
     {
         $options = $this->filterOptions($options);
         
-        return $this->ldap->search( $this->baseDn, 
+        return $this->ldap->search( 
+                                    $this->baseDn, 
                                     $filter, 
                                     $options['attributes'], 
                                     $options['scope'], 
                                     $options['attronly'], 
                                     $options['sizelimit'], 
                                     $options['timelimit'], 
-                                    $options['deref'])->count($ttl);
+                                    $options['deref']
+                                )->count($ttl);
     }
     
     /**
@@ -347,7 +349,7 @@ class Mapper extends \DB\Cursor
      * @param array $options
      * @return type
      */
-    private function filterOptions(array $options)
+    private function filterOptions($options)
     {
         $result = [];
         $result['attributes']   = (array)$options['attributes']?$options['attributes']:[];
