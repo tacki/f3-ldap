@@ -8,12 +8,9 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 * [Connections Options](#connections-options)
 * [Query Options](#query-options)
 * [F3 Auth Class](#f3-auth-class)
-* [LDAP Class methos](#ldap-class-methods)
-    * [Connecting](#connecting-functions)
-    * [Settings](#settings-functions)
-    * [Search+Result](#search+result-functions)
-    * [Modification](#modification-functions)
-    * [Other](#other-functions)
+* [LDAP Class methods](#ldap-class-methods)
+* [Mapper Class methods](#mapper-class-methods)
+
 
 ## Installation
 
@@ -119,12 +116,12 @@ The Auth Class of F3 uses his own LDAP-Settings and is currently not compatible 
 
 Usage:
 ```php
-$auth = new \Auth ('ldap', $args = [
-                                        'dc'        = $f3->get('ldap.HOST'),
-                                        'base_dn'   = $f3->get('ldap.BASEDN'),
-                                        'rdn'       = $f3->get('ldap.USERNAME'),
-                                        'pw'        = $f3->get('ldap.PASSWORD')
-                                   ] 
+$auth = new \Auth ('ldap', [
+                                'dc'        = $f3->get('ldap.HOST'),
+                                'base_dn'   = $f3->get('ldap.BASEDN'),
+                                'rdn'       = $f3->get('ldap.USERNAME'),
+                                'pw'        = $f3->get('ldap.PASSWORD')
+                           ] 
                   );
 if ($auth->login($id, $pw) {
     // login successful
@@ -133,7 +130,7 @@ if ($auth->login($id, $pw) {
 
 ## LDAP Class Methods
 
-### Connecting Functions
+### Connecting
 ```php
 // Set LDAP Configuration and connect
 function connect(string $ldaphoststring=NULL) : LDAP;
@@ -143,7 +140,7 @@ function disconnect() : bool;
 function bind(string $username=NULL, string $password=NULL) : LDAP;
 ```
 
-### Settings Functions
+### Settings
 ```php
 // Get LDAP Option
 function getLDAPOption(int $option) : int;
@@ -155,7 +152,7 @@ function setLDAPOptions(array $options) : bool;
 function setBaseDN(string $baseDN) : LDAP;
 ```
 
-### Search+Result Functions
+### Search
 ```php
 // Start a search
 function search(string $searchdn=NULL, 
@@ -188,7 +185,7 @@ function getNextAttribute() : string;
 function getAllReferences() : array;
 ```
 
-### Modification Functions
+### Modification
 ```php
 // Add Entry at given dn
 function add(string $dn, array $entry) : bool;
@@ -202,8 +199,63 @@ function move(string $dn, string $newparent) : bool;
 function erase(string $dn) : bool;
 ```
 
-### Other Functions
+### Other
 ```php
 // Get Error Message/Error Code
 function getError($errCode=false) : string;
+```
+
+## Mapper Class Methods
+
+The Mapper extends https://github.com/bcosca/fatfree-core/blob/master/db/cursor.php
+and has more methods than those defined here
+
+### Data Mapping
+```php
+// Return the fields of the mapper object as an associative array
+function cast($obj = NULL) : array;
+// Clear given attribute
+function clear($attribute);
+// Reset changed Data info
+function clearChanges();
+// Get changed Data in this object
+function getChanges(): array;
+// Hydrate mapper object using hive array variable
+function copyfrom($var,$func=NULL);
+// Populate hive array variable with mapper fields
+function copyto($key);
+// Return DB Type ('LDAP')
+function dbtype() : string;
+// Check if given Attribute exists
+function exists($attribute) : bool;
+// Return Attribute Names
+function fields() : array;
+// Set Value of Attribute
+function set($attribute, $val);
+// Get Value of Attribute
+function &get($attribute);
+// Retrieve external iterator for fields
+function getIterator() : ArrayIterator;
+// Reset Object
+function reset();
+// Return record at specified offset using criteria of previous
+function skip($ofs=1) : array;
+```
+
+### Search
+```php
+// Start a Search
+function find($filter=NULL, array $options=NULL, $ttl=0) : array;
+// Count results
+function count($filter=NULL, array $options=NULL, $ttl=0) : int;
+```
+
+### Modification
+```php
+// Insert new record
+function insert() : bool;
+// Update current record
+function update() : bool;
+// Erase mapped entry/entries
+function erase(string $filter=NULL) : bool;
 ```
