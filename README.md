@@ -7,6 +7,7 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 * [Usage](#usage)
 * [Connections Options](#connections-options)
 * [Query Options](#query-options)
+* [F3 Auth Class](#f3-auth-class)
 * [LDAP Class methos](#ldap-class-methods)
     * [Connecting](#connecting-functions)
     * [Settings](#settings-functions)
@@ -109,6 +110,25 @@ $options['attronly']    // retrieve only the attributenames. Default: 0 (disable
 $options['limit']       // limit to x results. Default: 0 (no limit)
 $options['timelimit']   // limit timelimit to x seconds. Default: 0 (no limit)
 $options['deref']       // specify how aliases should be handled. Default: LDAP_DEREF_NEVER (no dereferencing)
+```
+
+## F3 Auth Class
+
+The Auth Class of F3 uses his own LDAP-Settings and is currently not compatible to f3-ldap.
+`$auth->login` does a ldap-search for `uid=id` and tries to bind this entry with the given `$pw`
+
+Usage:
+```php
+$auth = new \Auth ('ldap', $args = [
+                                        'dc'        = $f3->get('ldap.HOST'),
+                                        'base_dn'   = $f3->get('ldap.BASEDN'),
+                                        'rdn'       = $f3->get('ldap.USERNAME'),
+                                        'pw'        = $f3->get('ldap.PASSWORD')
+                                   ] 
+                  );
+if ($auth->login($id, $pw) {
+    // login successful
+}
 ```
 
 ## LDAP Class Methods
