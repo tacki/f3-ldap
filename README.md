@@ -115,7 +115,7 @@ $options['deref']       // specify how aliases should be handled. Default: LDAP_
 ## F3 Auth Class
 
 The Auth Class of F3 uses his own LDAP-Settings and is currently not compatible to f3-ldap.
-`$auth->login` does a ldap-search for `uid=id` and tries to bind this entry with the given `$pw`
+`$auth->login` does a ldap-search for `uid=$id` and tries to bind this entry with the given `$pw`
 
 Usage:
 ```php
