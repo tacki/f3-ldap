@@ -136,8 +136,10 @@ if ($auth->login($id, $pw) {
 function connect(string $ldaphoststring=NULL) : LDAP;
 // Disconnect from LDAP 
 function disconnect() : bool;
-// Try to bind using Credentials in Config or parameters
+// Bind using Credentials in Config or parameters
 function bind(string $username=NULL, string $password=NULL) : LDAP;
+// Try to bind using given credentials (useful for authchecking)
+function tryBind(string $username, string $password) : bool;
 ```
 
 ### Settings
@@ -258,4 +260,6 @@ function insert() : bool;
 function update() : bool;
 // Erase mapped entry/entries
 function erase(string $filter=NULL) : bool;
+// Move current entry to new parent
+function moveTo(string $newParentDN) : bool;
 ```
