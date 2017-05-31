@@ -285,6 +285,12 @@ class LDAP extends \Prefab
      */
     public function save(string $dn, array $changes)
     {
+        // Invalidate Cache        
+        $f3    = \Base::instance();
+        $cache = \Cache::instance();
+        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
+        $cache->clear($cacheHash);          
+        
         return ldap_modify($this->ldap, $dn, $changes);
     }
     
@@ -296,6 +302,12 @@ class LDAP extends \Prefab
      */
     public function rename(string $dn, string $newrdn)
     {
+        // Invalidate Cache        
+        $f3    = \Base::instance();
+        $cache = \Cache::instance();
+        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
+        $cache->clear($cacheHash);        
+        
         if (($rdns = ldap_explode_dn($dn, 0)) !== false) {
             unset($rdns['count']);
             array_shift($rdns);
@@ -312,7 +324,13 @@ class LDAP extends \Prefab
      * @return bool
      */
     public function move(string $dn, string $newparent)
-    {                
+    {               
+        // Invalidate Cache
+        $f3    = \Base::instance();
+        $cache = \Cache::instance();
+        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
+        $cache->clear($cacheHash);        
+        
         if (($rdns = ldap_explode_dn($dn, 0)) !== false) {
             $rdn = $rdns[0];
         }
@@ -327,6 +345,12 @@ class LDAP extends \Prefab
      */
     public function erase(string $dn)
     {
+        // Invalidate Cache        
+        $f3    = \Base::instance();
+        $cache = \Cache::instance();
+        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
+        $cache->clear($cacheHash);
+        
         return ldap_delete($this->ldap, $dn);
     }
 
