@@ -95,7 +95,12 @@ class Mapper extends \DB\Cursor
     {    
         $changes = $this->getChanges();
         $this->clearChanges();
-        return $this->ldap->save($this->dn, $changes);
+        
+        if($changes) {
+            return $this->ldap->save($this->dn, $changes);
+        } else {
+            return true;
+        }
     }  
     
     /**
@@ -142,6 +147,10 @@ class Mapper extends \DB\Cursor
                                         $options['timelimit'], 
                                         $options['deref']
                                     );
+        
+        if (!$search->count()) {
+            return [];
+        }        
         
         if ($options['limit'] === 1) {
             $entries = array($search->getFirstEntry($ttl));
@@ -198,6 +207,21 @@ class Mapper extends \DB\Cursor
         
         return $out;
     }   
+    
+    /**
+     * Move mapped entry
+     * @param string $newParentDN
+     * @return bool
+     */    
+    public function moveTo(string $newParentDN)
+    {
+        $out = $this->ldap->move($this->dn, $newParentDN);
+        if ($out) {
+            $this->dn = explode(',',$this->dn)[0] .','. $newParentDN;
+        }
+        
+        return $out;
+    }    
     
     /**
      * Get Attribute names

@@ -165,12 +165,23 @@ class LDAP extends \Prefab
         $user = $username?$username:$f3->get('ldap.USERNAME');
         $pass = $password?$password:$f3->get('ldap.PASSWORD');
         
-        ldap_bind($this->ldap, $user, $pass);
-        
-        $this->authUser = $user;
+        if (ldap_bind($this->ldap, $user, $pass)) {
+            $this->authUser = $user;
+        }
         
         return $this;
     }    
+    
+    /**
+     * Try a Bind (useful for Authentication checks
+     * @param string $username
+     * @param string $password
+     * @return bool
+     */
+    public function tryBind(string $username, string $password)
+    {
+        return @ldap_bind($this->ldap, $username, $password);                   
+    }
     
     /**
      * Set Base DN
