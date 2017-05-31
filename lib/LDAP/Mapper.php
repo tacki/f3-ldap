@@ -255,9 +255,7 @@ class Mapper extends \DB\Cursor
             $var=call_user_func($func,$var);
         }
         foreach ($var as $key=>$val) {
-            if (in_array($key,array_keys($this->data))) {
-                $this->set($key,$val);
-            }
+            $this->set($key,$val);
         }
     }   
     
