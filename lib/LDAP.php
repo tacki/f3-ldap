@@ -371,6 +371,7 @@ class LDAP extends \Prefab
      */
     public function count(int $ttl=0)
     {
+        $count = 0;
         $cache = \Cache::instance();
         $cacheHash = 'ldap.count.'.$this->getSearchHash();
         
@@ -378,7 +379,9 @@ class LDAP extends \Prefab
             return $cache->get($cacheHash);
         } 
         
-        $count = ldap_count_entries($this->ldap, $this->searchResult);
+        if (is_resource($this->searchResult)) {
+            $count = ldap_count_entries($this->ldap, $this->searchResult);
+        }
             
         if ($ttl) {
             $cache->set($cacheHash, $count, $ttl);
@@ -436,7 +439,9 @@ class LDAP extends \Prefab
      */
     public function first()
     {
-        $this->curEntry = ldap_first_entry($this->ldap, $this->searchResult);        
+        if (is_resource($this->searchResult)) {
+            $this->curEntry = ldap_first_entry($this->ldap, $this->searchResult);        
+        }
 
         return $this;
     }    
@@ -487,8 +492,9 @@ class LDAP extends \Prefab
     public function getAllReferences()
     {
         $referrals = [];
-        
-        ldap_parse_result($this->ldap, $this->searchResult, $errcode, $matcheddn, $errmsg, $referrals);
+        if (is_resource($this->searchResult)) {            
+            ldap_parse_result($this->ldap, $this->searchResult, $errcode, $matcheddn, $errmsg, $referrals);
+        }
         
         return $referrals;
     }
@@ -499,7 +505,9 @@ class LDAP extends \Prefab
      */
     public function free()
     {
-        $result = ldap_free_result($this->searchResult);
+        if (is_resource($this->searchResult)) {
+            $result = ldap_free_result($this->searchResult);
+        }
         $this->curEntry = false;
         $this->searchparams = '';
         
@@ -543,7 +551,11 @@ class LDAP extends \Prefab
      */
     private function getEntries()
     {     
-        $entries = ldap_get_entries($this->ldap, $this->searchResult);
+        $entries = [];
+        
+        if (is_resource($this->searchResult)) {
+            $entries = ldap_get_entries($this->ldap, $this->searchResult);
+        }
         
         foreach ($entries as $key => &$entry) {
             if (is_array($entry)) {
