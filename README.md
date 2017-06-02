@@ -92,7 +92,7 @@ PASSWORD="password"
 
 [ldap.options]
 LDAP_OPT_PROTOCOL_VERSION=3
-LDAP_OPT_DEREF=0
+LDAP_OPT_REFERRALS=0
 ...
 ```
 
@@ -140,6 +140,8 @@ function disconnect() : bool;
 function bind(string $username=NULL, string $password=NULL) : LDAP;
 // Try to bind using given credentials (useful for authchecking)
 function tryBind(string $username, string $password) : bool;
+// Returns true if a valid connection is established
+function isConnected() : bool;
 ```
 
 ### Settings
