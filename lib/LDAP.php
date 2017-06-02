@@ -183,6 +183,16 @@ class LDAP extends \Prefab
         return @ldap_bind($this->ldap, $username, $password);                   
     }
     
+    
+    /**
+     * Returns true if a valid connection is established
+     * @return bool
+     */
+    public function isConnected()
+    {
+        return ($this->ldap && $this->authUser);
+    }
+    
     /**
      * Set Base DN
      * @param string $baseDN
