@@ -76,7 +76,7 @@ class LDAP extends \Prefab
             #
             $this->baseDN = $basedn;
             $this->host = $ldaphoststring;
-        } elseif($f3->get('ldap.HOST'))  {                 
+        } elseif($f3->get('ldap.HOST') && $f3->get('ldap.USERNAME'))  {                 
             $this->setLDAPOptions((array)$f3->get('ldap.options'));
             $this->connect($f3->get('ldap.HOST'));
             $this->bind($f3->get('ldap.USERNAME'), $f3->get('ldap.PASSWORD'));
