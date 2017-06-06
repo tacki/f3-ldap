@@ -142,6 +142,8 @@ function bind(string $username=NULL, string $password=NULL) : LDAP;
 function tryBind(string $username, string $password) : bool;
 // Returns true if a valid connection is established
 function isConnected() : bool;
+// Returns the currently authenticated User
+function getAuthUser($getDN=false, int $ttl=0) : string;
 ```
 
 ### Settings
@@ -154,6 +156,12 @@ function setLDAPOption(int $option, $value) : bool;
 function setLDAPOptions(array $options) : bool;
 // Set Base DN
 function setBaseDN(string $baseDN) : LDAP;
+// Get Base DN
+function getBaseDN() : string;
+// Set custom Authentication Attributes (defaults: mail, cn, uid)
+function setAuthAttributes(array $authAttributes) : LDAP;
+// Get Authentication Attributes
+function getAuthAttributes() : array;
 ```
 
 ### Search

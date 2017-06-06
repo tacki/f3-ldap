@@ -58,6 +58,11 @@ class LDAP extends \Prefab
     protected $curEntry;    
     
     /**
+     * @var array
+     */
+    protected $authAttributes=['mail','uid','cn'];
+    
+    /**
      * Constructor
      * @param string $ldaphoststring
      * @param string %basedn
@@ -97,7 +102,11 @@ class LDAP extends \Prefab
      */
     public function connect(string $ldaphoststring=NULL)
     {
-        $this->ldap   = ldap_connect($ldaphoststring);  
+        $f3 = \Base::instance();
+        
+        $host = $ldaphoststring?$ldaphoststring:$f3->get('ldap.HOST');        
+        
+        $this->ldap   = ldap_connect($host);  
        
         return $this;
     }
@@ -198,6 +207,54 @@ class LDAP extends \Prefab
     }
     
     /**
+     * Get Authenticated User
+     * @param bool $getDN
+     * @param int $ttl
+     * @return string
+     */
+    public function getAuthUser($getDN=false, int $ttl=0)    
+    {
+        if (!$getDN) {
+            return $this->authUser;
+        }
+        
+        if (!$this->authUser) {
+            return '';
+        }
+        
+        $filter = "(|";
+        foreach ($this->authAttributes as $attr) {
+            $filter .= "($attr=$this->authUser)";
+        }
+        $filter .= ")";
+        
+        $res = $this->search(NULL, $filter, ['dn'])->getFirstEntry($ttl);
+        
+        return isset($res['dn'])?$res['dn']:'';        
+    }         
+    
+    /**
+     * Set custom Auth Attributes (defaults: mail, cn, uid)
+     * @param array $authAttributes
+     * @return $this
+     */
+    public function setAuthAttributes(array $authAttributes)
+    {
+        $this->authAttributes = $authAttributes;
+        
+        return $this;
+    }
+    
+    /**
+     * Get Auth Attributes
+     * @return array
+     */
+    public function getAuthAttributes()
+    {
+        return $this->authAttributes;
+    }
+    
+    /**
      * Set Base DN
      * @param string $baseDN
      * @return $this
@@ -207,6 +264,15 @@ class LDAP extends \Prefab
         $this->baseDN = $baseDN;
         
         return $this;
+    }
+    
+    /**
+     * Get Base DN
+     * @return string
+     */
+    public function getBaseDN()
+    {
+        return $this->baseDN;
     }
     
     /**
