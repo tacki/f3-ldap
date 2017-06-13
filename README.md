@@ -117,10 +117,10 @@ The Auth Class of F3 uses his own LDAP-Settings and is currently not compatible 
 Usage:
 ```php
 $auth = new \Auth ('ldap', [
-                                'dc'        = $f3->get('ldap.HOST'),
-                                'base_dn'   = $f3->get('ldap.BASEDN'),
-                                'rdn'       = $f3->get('ldap.USERNAME'),
-                                'pw'        = $f3->get('ldap.PASSWORD')
+                                'dc'        => $f3->get('ldap.HOST'),
+                                'base_dn'   => $f3->get('ldap.BASEDN'),
+                                'rdn'       => $f3->get('ldap.USERNAME'),
+                                'pw'        => $f3->get('ldap.PASSWORD')
                            ] 
                   );
 if ($auth->login($id, $pw) {
@@ -231,7 +231,7 @@ function clear($attribute);
 // Reset changed Data info
 function clearChanges();
 // Get changed Data in this object
-function getChanges(): array;
+function getChanges() : array;
 // Hydrate mapper object using hive array variable
 function copyfrom($var,$func=NULL);
 // Populate hive array variable with mapper fields
@@ -245,7 +245,7 @@ function fields() : array;
 // Set Value of Attribute
 function set($attribute, $val);
 // Get Value of Attribute
-function &get($attribute);
+function &get($attribute) : mixed;
 // Retrieve external iterator for fields
 function getIterator() : ArrayIterator;
 // Reset Object
