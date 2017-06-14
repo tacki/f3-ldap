@@ -14,7 +14,7 @@ This plugin is build for [Fat-Free Framework](http://www.fatfreeframework.com/).
 
 ## Installation
 
-To install this plugin, just copy the `lib/LDAP.php` and the `lib/LDAP` folder into your F3 `lib/` or your `AUTOLOAD` folder. This plugin requires PHP7.
+To install this plugin, just copy the `lib/LDAP.php` and the `lib/LDAP` folder into your F3 `lib/` or your `AUTOLOAD` folder.
 
 ## Usage
 

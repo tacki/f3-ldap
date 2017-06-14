@@ -50,7 +50,7 @@ class Mapper extends \DB\Cursor
      * Constructor
      * @param LDAP $ldap
      */
-    public function __construct(LDAP $ldap, string $baseDn=NULL)
+    public function __construct(LDAP $ldap, $baseDn=NULL)
     {
         $this->ldap = $ldap;
         $this->baseDn = $baseDn;
@@ -194,7 +194,7 @@ class Mapper extends \DB\Cursor
      * @param string $filter
      * @return bool
      */
-    public function erase(string $filter=NULL)
+    public function erase($filter=NULL)
     {  
         if ($filter) {
             foreach ($this->find($filter) as $mapper) {
@@ -213,7 +213,7 @@ class Mapper extends \DB\Cursor
      * @param string $newParentDN
      * @return bool
      */    
-    public function moveTo(string $newParentDN)
+    public function moveTo($newParentDN)
     {
         $out = $this->ldap->move($this->dn, $newParentDN);
         if ($out) {

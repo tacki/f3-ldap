@@ -70,7 +70,7 @@ class LDAP extends \Prefab
      * @param string $password
      * @param array $options
      */
-    public function __construct(string $ldaphoststring=NULL, string $basedn=NULL, string $username=NULL, string $password=NULL, array $options=array())
+    public function __construct($ldaphoststring=NULL, $basedn=NULL, $username=NULL, $password=NULL, array $options=array())
     {
         $f3 = \Base::instance();        
         
@@ -100,7 +100,7 @@ class LDAP extends \Prefab
      * @param string $ldaphoststring
      * @return $this
      */
-    public function connect(string $ldaphoststring=NULL)
+    public function connect($ldaphoststring=NULL)
     {
         $f3 = \Base::instance();
         
@@ -125,7 +125,7 @@ class LDAP extends \Prefab
      * @param int $option
      * @return int
      */
-    public function getLDAPOption(int $option)
+    public function getLDAPOption($option)
     {
         $value = NULL;
         
@@ -140,7 +140,7 @@ class LDAP extends \Prefab
      * @param mixed $value
      * @return bool
      */
-    public function setLDAPOption(int $option, $value)
+    public function setLDAPOption($option, $value)
     {
         return ldap_set_option($this->ldap, $option, $value);
     }
@@ -171,7 +171,7 @@ class LDAP extends \Prefab
      * @param string $password
      * @return $this
      */
-    public function bind(string $username=NULL, string $password=NULL)
+    public function bind($username=NULL, $password=NULL)
     {        
         $f3 = \Base::instance();
         
@@ -191,7 +191,7 @@ class LDAP extends \Prefab
      * @param string $password
      * @return bool
      */
-    public function tryBind(string $username, string $password)
+    public function tryBind($username, $password)
     {
         return @ldap_bind($this->ldap, $username, $password);                   
     }
@@ -212,7 +212,7 @@ class LDAP extends \Prefab
      * @param int $ttl
      * @return string
      */
-    public function getAuthUser($getDN=false, int $ttl=0)    
+    public function getAuthUser($getDN=false, $ttl=0)    
     {
         if (!$getDN) {
             return $this->authUser;
@@ -259,7 +259,7 @@ class LDAP extends \Prefab
      * @param string $baseDN
      * @return $this
      */
-    public function setBaseDN(string $baseDN)
+    public function setBaseDN($baseDN)
     {
         $this->baseDN = $baseDN;
         
@@ -301,7 +301,7 @@ class LDAP extends \Prefab
      * @param type $deref
      * @return $this
      */
-    public function search(string $searchdn=NULL, string $filter='(objectclass=*)', array $attributes=array(), $scope=SELF::SCOPE_SUBTREE, $attrsonly=0, $sizelimit=0, $timelimit=0, $deref=LDAP_DEREF_NEVER)
+    public function search($searchdn=NULL, $filter='(objectclass=*)', array $attributes=array(), $scope=SELF::SCOPE_SUBTREE, $attrsonly=0, $sizelimit=0, $timelimit=0, $deref=LDAP_DEREF_NEVER)
     {               
         $this->searchparams = "$filter.$searchdn.".implode('.',$attributes).".$scope.$attrsonly.$sizelimit";
         
@@ -352,7 +352,7 @@ class LDAP extends \Prefab
      * @param array $entry
      * @return bool
      */
-    public function add(string $dn, array $entry)
+    public function add($dn, array $entry)
     {
         return ldap_add($this->ldap, $dn, $entry);
     }
@@ -363,7 +363,7 @@ class LDAP extends \Prefab
      * @param array $changes
      * @return bool
      */
-    public function save(string $dn, array $changes)
+    public function save($dn, array $changes)
     {
         // Invalidate Cache        
         $f3    = \Base::instance();
@@ -380,7 +380,7 @@ class LDAP extends \Prefab
      * @param string $newrdn
      * @return bool
      */
-    public function rename(string $dn, string $newrdn)
+    public function rename($dn, $newrdn)
     {
         // Invalidate Cache        
         $f3    = \Base::instance();
@@ -403,7 +403,7 @@ class LDAP extends \Prefab
      * @param string $newparent
      * @return bool
      */
-    public function move(string $dn, string $newparent)
+    public function move($dn, $newparent)
     {               
         // Invalidate Cache
         $f3    = \Base::instance();
@@ -423,7 +423,7 @@ class LDAP extends \Prefab
      * @param string $dn
      * @return bool
      */
-    public function erase(string $dn)
+    public function erase($dn)
     {
         // Invalidate Cache        
         $f3    = \Base::instance();
@@ -439,7 +439,7 @@ class LDAP extends \Prefab
      * @param int $ttl
      * @return int
      */
-    public function count(int $ttl=0)
+    public function count($ttl=0)
     {
         $count = 0;
         $cache = \Cache::instance();
@@ -465,7 +465,7 @@ class LDAP extends \Prefab
      * @param int $ttl
      * @return array
      */
-    public function getAll(int $ttl=0)
+    public function getAll($ttl=0)
     {
         $cache = \Cache::instance();
         $cacheHash = 'ldap.searchAll.'.$this->getSearchHash();
@@ -488,7 +488,7 @@ class LDAP extends \Prefab
      * @param int $ttl
      * @return array
      */
-    public function getFirstEntry(int $ttl=0)
+    public function getFirstEntry($ttl=0)
     {
         return $this->first()->getEntry($ttl);
     }
@@ -498,7 +498,7 @@ class LDAP extends \Prefab
      * @param int $ttl
      * @return array
      */
-    public function getEntry(int $ttl=0)
+    public function getEntry($ttl=0)
     {
         return $this->getSingleEntry($ttl);
     }
@@ -589,7 +589,7 @@ class LDAP extends \Prefab
      * @param int $ttl
      * @return array
      */
-    private function getSingleEntry(int $ttl=0)
+    private function getSingleEntry($ttl=0)
     {
         if (!$this->curEntry) {
             return [];
