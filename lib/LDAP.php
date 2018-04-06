@@ -354,6 +354,9 @@ class LDAP extends \Prefab
      */
     public function add($dn, array $entry)
     {
+        // Invalidate Cache (structure-change, invalidate all)
+        $this->clearCache(); 
+        
         return ldap_add($this->ldap, $dn, $entry);
     }
     
@@ -365,11 +368,9 @@ class LDAP extends \Prefab
      */
     public function save($dn, array $changes)
     {
-        // Invalidate Cache        
+        // Invalidate Cache (only DN is affected)
         $f3    = \Base::instance();
-        $cache = \Cache::instance();
-        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
-        $cache->clear($cacheHash);          
+        $this->clearCache('ldap.dn.'.$f3->hash($dn));         
         
         return ldap_modify($this->ldap, $dn, $changes);
     }
@@ -382,11 +383,8 @@ class LDAP extends \Prefab
      */
     public function rename($dn, $newrdn)
     {
-        // Invalidate Cache        
-        $f3    = \Base::instance();
-        $cache = \Cache::instance();
-        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
-        $cache->clear($cacheHash);        
+        // Invalidate Cache (structure-change, invalidate all)
+        $this->clearCache();       
         
         if (($rdns = ldap_explode_dn($dn, 0)) !== false) {
             unset($rdns['count']);
@@ -405,11 +403,8 @@ class LDAP extends \Prefab
      */
     public function move($dn, $newparent)
     {               
-        // Invalidate Cache
-        $f3    = \Base::instance();
-        $cache = \Cache::instance();
-        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
-        $cache->clear($cacheHash);        
+        // Invalidate Cache (structure-change, invalidate all)        
+        $this->clearCache();     
         
         if (($rdns = ldap_explode_dn($dn, 0)) !== false) {
             $rdn = $rdns[0];
@@ -425,11 +420,8 @@ class LDAP extends \Prefab
      */
     public function erase($dn)
     {
-        // Invalidate Cache        
-        $f3    = \Base::instance();
-        $cache = \Cache::instance();
-        $cacheHash = 'ldap.dn.'.$f3->hash($dn);        
-        $cache->clear($cacheHash);
+        // Invalidate Cache (structure-change, invalidate all)        
+        $this->clearCache();
         
         return ldap_delete($this->ldap, $dn);
     }
@@ -582,6 +574,23 @@ class LDAP extends \Prefab
         $this->searchparams = '';
         
         return $result;
+    }
+    
+    /**
+     * Clear cached results
+     * @param string $cacheEntry
+     * @return bool
+     */
+    public function clearCache($cacheEntry=false)
+    {
+        $cache = \Cache::instance();        
+        
+        if ($cacheEntry) {
+            return $cache->clear($cacheEntry);
+        } else {
+            //clear whole cache
+            return $cache->reset();
+        }
     }
        
     /**
