@@ -123,7 +123,7 @@ $auth = new \Auth ('ldap', [
                                 'pw'        => $f3->get('ldap.PASSWORD')
                            ] 
                   );
-if ($auth->login($id, $pw) {
+if ($auth->login($id, $pw)) {
     // login successful
 }
 ```
