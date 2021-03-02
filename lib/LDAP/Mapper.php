@@ -22,7 +22,7 @@ use LDAP;
 class Mapper extends \DB\Cursor
 {
     /**     
-     * @var resource
+     * @var object
      */
     protected $ldap;
     
@@ -196,6 +196,7 @@ class Mapper extends \DB\Cursor
      */
     public function erase($filter=NULL)
     {  
+        $out = "";
         if ($filter) {
             foreach ($this->find($filter) as $mapper) {
                 $out+=$mapper->erase();
@@ -374,12 +375,13 @@ class Mapper extends \DB\Cursor
     private function filterOptions($options)
     {
         $result = [];
-        $result['attributes']   = (array)$options['attributes']?$options['attributes']:[];
-        $result['scope']        = (int)$options['scope']?$options['scope']:LDAP::SCOPE_SUBTREE;
-        $result['attronly']     = (int)$options['attronly']?$options['attronly']:0;
-        $result['limit']        = (int)$options['limit']?$options['limit']:0;
-        $result['timelimit']    = (int)$options['timelimit']?$options['timelimit']:0;
-        $result['deref']        = (int)$options['deref']?$options['deref']:LDAP_DEREF_NEVER;         
+        $result['attributes']   = isset($options['attributes'])?(array)$options['attributes']:[];
+        $result['scope']        = isset($options['scope'])?(int)$options['scope']:LDAP::SCOPE_SUBTREE;
+        $result['attronly']     = isset($options['attronly'])?(int)$options['attronly']:0;
+        $result['limit']        = isset($options['limit'])?(int)$options['limit']:0;
+        $result['sizelimit']    = isset($options['sizelimit'])?(int)$options['sizelimit']:0;
+        $result['timelimit']    = isset($options['timelimit'])?(int)$options['timelimit']:0;
+        $result['deref']        = isset($options['deref'])?(int)$options['deref']:LDAP_DEREF_NEVER;           
         return $result;
     }
     

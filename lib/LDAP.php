@@ -684,8 +684,6 @@ class LDAP extends \Prefab
             } else {
                 $retEntry[$attribute] = NULL;
             }
-            
-            $retEntry['dn'] = $entry['dn'];
         }
         
         return $retEntry;
