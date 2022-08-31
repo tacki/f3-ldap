@@ -111,17 +111,17 @@ class Mapper extends \DB\Cursor
      */
     protected function factory(array $data) 
     {
-            $mapper=clone($this);
-            $mapper->reset();
-            $mapper->dn=$data['dn'];
-            foreach ($data as $field=>$val) {
-                    $mapper->data[$field]=$val;
-            }
-            $mapper->query=[clone($mapper)];
-            if (isset($mapper->trigger['load'])) {
-                    \Base::instance()->call($mapper->trigger['load'],$mapper);
-            }
-            return $mapper;
+        $mapper=clone($this);
+        $mapper->reset();
+        $mapper->dn=$data['dn'];
+        foreach ($data as $field=>$val) {
+                $mapper->data[$field]=$val;
+        }
+        $mapper->query=[clone($mapper)];
+        if (isset($mapper->trigger['load'])) {
+                \Base::instance()->call($mapper->trigger['load'],$mapper);
+        }
+        return $mapper;
     }    
         
     /**
@@ -348,13 +348,13 @@ class Mapper extends \DB\Cursor
      */
     public function skip($ofs=1) 
     {
-            $this->data=($out=parent::skip($ofs))?$out->data:[];
-            $this->origData = $this->data;
-            $this->dn=$out?$out->dn:NULL;
-            if ($this->data && isset($this->trigger['load'])) {
-                    \Base::instance()->call($this->trigger['load'],$this);
-            }
-            return $out;
+        $this->data=($out=parent::skip($ofs))?$out->data:[];
+        $this->origData = $this->data;
+        $this->dn=$out?$out->dn:NULL;
+        if ($this->data && isset($this->trigger['load'])) {
+                \Base::instance()->call($this->trigger['load'],$this);
+        }
+        return $out;
     }    
     
     /**

@@ -567,6 +567,8 @@ class LDAP extends \Prefab
      */
     public function free()
     {
+        $result = false;
+
         if (is_resource($this->searchResult)) {
             $result = ldap_free_result($this->searchResult);
         }
