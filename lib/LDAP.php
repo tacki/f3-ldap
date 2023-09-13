@@ -23,7 +23,8 @@ class LDAP extends \Prefab
     const SCOPE_SUBTREE = 3;    
     
     /**   
-     * @var resource 
+     * @var resource before 8.1
+     * @var LDAP\Connection after 8.1
      */
     protected $ldap;
     
@@ -48,12 +49,14 @@ class LDAP extends \Prefab
     protected $searchparams;    
     
     /**
-     * @var resource  
+     * @var resource  before 8.1
+     * @var LDAP\Result after 8.1
      */
     protected $searchResult;
     
     /**
-     * @var resource  
+     * @var resource  before 8.1
+     * @var LDAP\ResultEntry after 8.1
      */
     protected $curEntry;    
     
@@ -441,7 +444,7 @@ class LDAP extends \Prefab
             return $cache->get($cacheHash);
         } 
         
-        if (is_resource($this->searchResult)) {
+        if ($this->searchResult instanceof LDAP\Result || is_resource($this->searchResult)) {
             $count = ldap_count_entries($this->ldap, $this->searchResult);
         }
             
@@ -501,7 +504,7 @@ class LDAP extends \Prefab
      */
     public function first()
     {
-        if (is_resource($this->searchResult)) {
+        if ($this->searchResult instanceof LDAP\Result || is_resource($this->searchResult)) {
             $this->curEntry = ldap_first_entry($this->ldap, $this->searchResult);        
         }
 
@@ -554,7 +557,7 @@ class LDAP extends \Prefab
     public function getAllReferences()
     {
         $referrals = [];
-        if (is_resource($this->searchResult)) {            
+        if ($this->searchResult instanceof LDAP\Result || is_resource($this->searchResult)) {            
             ldap_parse_result($this->ldap, $this->searchResult, $errcode, $matcheddn, $errmsg, $referrals);
         }
         
@@ -569,7 +572,7 @@ class LDAP extends \Prefab
     {
         $result = false;
 
-        if (is_resource($this->searchResult)) {
+        if ($this->searchResult instanceof LDAP\Result || is_resource($this->searchResult)) {
             $result = ldap_free_result($this->searchResult);
         }
         $this->curEntry = false;
@@ -634,7 +637,7 @@ class LDAP extends \Prefab
     {     
         $entries = [];
         
-        if (is_resource($this->searchResult)) {
+        if ($this->searchResult instanceof LDAP\Result || is_resource($this->searchResult)) {
             $entries = ldap_get_entries($this->ldap, $this->searchResult);
         }
         
